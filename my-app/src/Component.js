@@ -60,7 +60,7 @@ export default function Component() {
     // Fetch AI response from local server
     const fetchAiResponse = async (message) => {
         try {
-            const response = await fetch('http://localhost:3000/generate', {
+            const response = await fetch('http://localhost:8000/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ prompt: message }),

@@ -4,7 +4,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const cors = require('cors'); // Import the cors package
 
 const app = express();
-const port = 3000; // You can choose any port
+const port = 8000; // You can choose any port
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -26,7 +26,7 @@ app.post('/generate', async (req, res) => {
         // Generate content using the model
         const result = await model.generateContent(prompt);
         const responseText = result.response.text();
-
+        console.log(result);
         // Function to parse special formatting
         const formatText = (text) => {
             // Replace ## with <h2> tags
