@@ -1,26 +1,36 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Check if there's a token in localStorage and set the user
         const token = localStorage.getItem('token');
         if (token) {
-            setUser({ token }); // You may need to fetch user details if necessary
+            console.log('Token found:', token); // Debugging
+
+            // Optionally validate token with the server here
+            setUser({ token });
+        } else {
+            console.log('No token found'); // Debugging
+            navigate('/login');
         }
-    }, []);
+    }, [navigate]);
 
     const login = (userData) => {
         setUser(userData);
         localStorage.setItem('token', userData.token);
+        console.log('User logged in:', userData); // Debugging
     };
 
     const logout = () => {
         setUser(null);
         localStorage.removeItem('token');
+        navigate('/login');
+        console.log('User logged out'); // Debugging
     };
 
     return (

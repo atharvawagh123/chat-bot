@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './Login';
 import Register from './Register';
 import Component from './Component';
-import { AuthProvider, useAuth } from './AuthContext'; // Ensure useAuth is imported here
+import { AuthProvider, useAuth } from './AuthContext';
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
       <AuthProvider>
         <div className="App">
           <Routes>
-            <Route path="/main" element={<ProtectedRoute />} />
+            <Route path="/main" element={<Component /> } />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="*" element={<Navigate to="/login" />} />
@@ -23,7 +23,9 @@ function App() {
 }
 
 const ProtectedRoute = () => {
-  const { user } = useAuth(); // Ensure useAuth is used here
+  const { user } = useAuth();
+
+  console.log('ProtectedRoute user:', user); // Debugging
 
   return user ? <Component /> : <Navigate to="/login" />;
 };
