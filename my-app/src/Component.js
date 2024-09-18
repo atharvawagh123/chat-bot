@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Component.css';
 import { VscAccount } from "react-icons/vsc";
 import { IoIosSend } from "react-icons/io";
+import { useAuth } from './AuthContext'; // Import useAuth hook
 
 // Helper function to format time
 const formatTime = (date) => {
@@ -14,6 +15,7 @@ const formatTime = (date) => {
 };
 
 export default function Component() {
+    const { user, logout } = useAuth(); // Access authentication state and logout function
     const [messages, setMessages] = useState([]);
     const [userMessage, setUserMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false); // New state for loading
@@ -29,6 +31,10 @@ export default function Component() {
     // Handle input submit
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!user) {
+            alert("You need to log in to send messages.");
+            return;
+        }
         if (userMessage.trim() === '' || isLoading) return; // Prevent submit if loading
 
         const currentTime = new Date();
@@ -74,6 +80,26 @@ export default function Component() {
         }
     };
 
+    // Handle logout
+    const handleLogout = async () => {
+        try {
+            await fetch('http://localhost:8000/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`, // Pass the token if needed
+                },
+            });
+            logout(); // Clear user data in context
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+    };
+
+    if (!user) {
+        return <div>Please log in to access the chat.</div>;
+    }
+
     return (
         <div className="app-container">
             <div className="sidebar">
@@ -92,16 +118,17 @@ export default function Component() {
                     }
                 </div>
                 <div className="user-info">
-                  
-                        <div className="avatar">
-                            <VscAccount className="message-icon" />
-                        </div>
-                        <div className="user-details">
-                            <span>Welcome back,</span>
-                            <span className="user-name">Suvigya</span>
-                        </div>
-                  
+                    <div className="avatar">
+                        <VscAccount className="message-icon" />
+                    </div>
+                    <div className="user-details">
+                        <span>Welcome back,</span>
+                        <span className="user-name">{user.name || 'User'}</span>
+                    </div>
                 </div>
+                <button onClick={handleLogout} className="logout-button">
+                    Logout
+                </button>
             </div>
 
             <div className="chat-area">

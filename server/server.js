@@ -2,6 +2,8 @@ require('dotenv').config(); // For loading environment variables from .env file
 const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const cors = require('cors'); // Import the cors package
+const mongoose = require('mongoose');
+const authRoutes = require('./auth');
 
 const app = express();
 const port = 8000; // You can choose any port
@@ -13,6 +15,14 @@ app.use(cors());
 // Initialize the GoogleGenerativeAI instance
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => console.error('MongoDB connection error:', err));
+
+// Routes
+app.use('/api/auth', authRoutes); // Authentication routes
 
 // Endpoint to handle content generation requests
 app.post('/generate', async (req, res) => {
