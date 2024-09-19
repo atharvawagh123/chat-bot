@@ -18,6 +18,7 @@ function Login() {
         setLoading(true); // Start loading
         try {
             console.log('Sending login request with:', { email, password });
+            localStorage.setItem('email', email);
             const response = await axios.post('http://localhost:8000/api/auth/login', {
                 email,
                 password,
